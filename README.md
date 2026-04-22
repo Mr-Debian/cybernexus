@@ -1,221 +1,234 @@
-Внимание разработка проекта приостановлена
-📘 CYBERNEXUS — ПОЛНЫЙ КОНЦЕПТ ПРОЕКТА
-🎯 Что такое CyberNexus
-CyberNexus — это универсальный портативный сервер на базе Orange Pi с веб-интерфейсом в стиле хакерского терминала. Проект создан для автономной работы в любых условиях: дома, в дороге, в полевых условиях с питанием от powerbank.
+CyberNexus
+Универсальный портативный сервер на Orange Pi с веб-интерфейсом в хакерском стиле.
 
-🌟 Ключевые особенности
-Портативность — работает от любого USB-питания (powerbank, ноутбук, зарядка телефона)
+Работает от любого USB-питания (powerbank, ноутбук, зарядка). Автоматически переключается между Wi-Fi сетями, создаёт свою точку доступа, если знакомых сетей нет.
 
-Автономность — сам переключается между Wi-Fi сетями, может создавать свою точку доступа
+Возможности
+Личные файлы — у каждого пользователя своё хранилище с лимитом
 
-Мультипользовательский режим — личные и общие файлы, чат, проекты
+Общие файлы — публичное хранилище для всех
 
-Установщик проектов — загрузка и запуск любых Python/Node.js проектов через веб-интерфейс
+Чат — общение в реальном времени
 
-Интеграция с Telegram — управление через бота, привязка аккаунтов
+Веб-терминал — полноценный bash прямо в браузере
 
-Хакерский стиль — матричный дизайн, ASCII-лого, терминальное оформление
+Wi-Fi менеджер — сканирование, подключение, сохранение сетей
 
-🏗️ Архитектура проекта
+Установщик проектов — загрузка и запуск Python/Node.js проектов через веб
 
-┌─────────────────────────────────────────────────────────────┐
-│                     CYBERNEXUS                               │
-├─────────────────────────────────────────────────────────────┤
-│  🌐 Веб-интерфейс (Flask)                                   │
-│  ├── 🔐 Авторизация (Flask-Login)                           │
-│  ├── 📁 Файловый менеджер                                   │
-│  ├── 💬 Чат (SQLite)                                        │
-│  ├── 🖥️ Веб-терминал (WebSocket + PTY)                      │
-│  ├── 📶 Wi-Fi менеджер                                      │
-│  ├── 🚀 Установщик проектов                                 │
-│  └── 👑 Админ-панель                                        │
-├─────────────────────────────────────────────────────────────┤
-│  📦 Хранилище                                               │
-│  ├── /srv/cybernexus/users/  — личные файлы                 │
-│  ├── /srv/cybernexus/common/ — общие файлы                  │
-│  └── /srv/cybernexus/projects/ — установленные проекты      │
-├─────────────────────────────────────────────────────────────┤
-│  🤖 Интеграции                                              │
-│  ├── Telegram Bot (aiogram)                                 │
-│  ├── mDNS (avahi) — доступ по имени.local                   │
-│  └── Systemd — автозапуск                                   │
-└─────────────────────────────────────────────────────────────┘
-📊 Функциональные модули
-Модуль	Доступ	Описание
-Авторизация	Все	Логин/пароль, регистрация, хэширование bcrypt
-Личные файлы	Все	Загрузка, скачивание, удаление, лимит хранилища
-Общие файлы	Все	Публичное хранилище, удаление только для админа
-Чат	Все	Реальное время, история 50 сообщений
-Мои проекты	Все	Запуск/остановка/логи своих проектов
-Wi-Fi менеджер	Админ	Сканирование, подключение, сохранённые сети
-Терминал	Админ	Полноценный bash с WebSocket
-Админ-панель	Админ	Управление пользователями, лимиты, общее хранилище
-Установщик	Админ	Загрузка .txt/.zip/.py, автоустановка проектов
-Telegram бот	Все	Привязка аккаунта, общие файлы, уведомления
-🔧 Технический стек
-Компонент	Технология
-Бэкенд	Python 3, Flask
-База данных	SQLite
-Реальное время	WebSocket (Flask-SocketIO)
-Терминал	PTY + xterm.js
-Telegram бот	aiogram 3.x
-Wi-Fi управление	wpa_supplicant, iwlist
-Автозапуск	systemd, screen
-Фронтенд	HTML5, CSS3, Vanilla JS
-📁 Структура базы данных
-sql
--- Пользователи
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE,
-    password TEXT,           -- bcrypt хэш
-    is_admin INTEGER,
-    storage_limit_mb INTEGER,
-    created_at TIMESTAMP,
-    last_login TIMESTAMP
-);
+Telegram бот — привязка аккаунта, доступ к общим файлам
 
--- Сообщения чата
-CREATE TABLE messages (
-    id INTEGER PRIMARY KEY,
-    username TEXT,
-    message TEXT,
-    timestamp TIMESTAMP
-);
+Админ-панель — управление пользователями и лимитами
 
--- Настройки
-CREATE TABLE settings (
-    key TEXT PRIMARY KEY,
-    value TEXT
-);
+Адаптивный дизайн — работает на ПК, планшете и телефоне
 
--- Сохранённые Wi-Fi сети
-CREATE TABLE known_networks (
-    id INTEGER PRIMARY KEY,
-    ssid TEXT,
-    password TEXT,
-    priority INTEGER
-);
+Быстрый старт
+Установка Armbian на Orange Pi Zero 2W:
 
--- Привязка Telegram
-CREATE TABLE telegram_links (
-    tg_id INTEGER PRIMARY KEY,
-    username TEXT,
-    linked_at TIMESTAMP
-);
-🚀 Сценарии использования
-1. Домашний сервер
-Orange Pi подключён к домашнему Wi-Fi
+Скачай образ с официального сайта armbian.com, запиши на SD-карту через Rufus или Balena Etcher, вставь в Orange Pi и включи питание.
 
-Доступ по http://orangepizero2w.local:5000
+После загрузки подключись по SSH или используй монитор:
 
-Хранение файлов, чат для семьи, запуск проектов
+Логин: root
+Пароль: 1234
 
-2. Мобильный сервер
-Orange Pi питается от powerbank
+Система попросит сменить пароль и создать обычного пользователя.
 
-Подключается к точке доступа телефона
+Установка CyberNexus:
 
-Доступ через mDNS или IP из настроек телефона
-
-Все функции доступны в дороге
-
-3. Автономная точка доступа
-Если знакомых сетей нет — создаёт свою AP CyberNexus_AP
-
-Подключение к ней, доступ по http://192.168.4.1:5000
-
-Можно настраивать Wi-Fi через веб-интерфейс
-
-4. Telegram-управление
-Бот привязан к аккаунту CyberNexus
-
-Просмотр общих файлов
-
-Загрузка файлов в общее хранилище
-
-Уведомления о статусе системы
-
-🛠️ Установка с нуля
-bash
-# 1. Установка зависимостей
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y python3 python3-pip python3-venv git screen sqlite3 wireless-tools wpasupplicant avahi-daemon
 
-# 2. Клонирование репозитория (или создание файлов)
 cd /opt
-sudo git clone https://github.com/your/cybernexus.git
+sudo git clone https://github.com/yourusername/cybernexus.git
 sudo chown -R $USER:$USER /opt/cybernexus
-
-# 3. Виртуальное окружение
 cd /opt/cybernexus
+
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# 4. Создание рабочих папок
 sudo mkdir -p /srv/cybernexus/{users,common,projects}
 sudo chown -R $USER:$USER /srv/cybernexus
 
-# 5. Запуск
 python app.py
 
-# 6. Автозапуск
-sudo cp cybernexus.service /etc/systemd/system/
+Открой браузер и перейди по адресу:
+
+http://orangepizero2w.local:5000
+
+Или по IP:
+
+http://192.168.1.100:5000
+
+Логин: admin
+Пароль: mr13
+
+Автозапуск
+Создай файл службы:
+
+sudo tee /etc/systemd/system/cybernexus.service << 'EOF'
+[Unit]
+Description=CyberNexus Server
+After=network.target
+
+[Service]
+Type=simple
+User=orangepi
+WorkingDirectory=/opt/cybernexus
+Environment="PATH=/opt/cybernexus/venv/bin"
+ExecStart=/opt/cybernexus/venv/bin/python /opt/cybernexus/app.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 sudo systemctl daemon-reload
 sudo systemctl enable cybernexus
 sudo systemctl start cybernexus
-📄 requirements.txt
-text
-flask>=2.0.0
-flask-login>=0.6.0
-flask-socketio>=5.0.0
-bcrypt>=4.0.0
-psutil>=5.8.0
-requests>=2.28.0
-python-socketio>=5.0.0
-python-engineio>=4.0.0
-aiogram>=3.0.0
-python-dotenv>=1.0.0
-aiohttp>=3.8.0
-🔐 Данные по умолчанию
-Параметр	Значение
-Логин админа	admin
-Пароль админа	mr13
-Порт веб-интерфейса	5000
-Точка доступа SSID	CyberNexus_AP
-Пароль точки доступа	cybernexus123
-IP точки доступа	192.168.4.1
-mDNS имя	orangepizero2w.local
-🎯 План развития (Roadmap)
-Версия	Функции
-v2.0 (текущая)	Файлы, чат, терминал, Wi-Fi менеджер, проекты, Telegram бот
-v2.1	Автопереключение Wi-Fi с выбором лучшего сигнала
-v2.2	Резервное копирование на USB
-v3.0	Поддержка Orange Pi 4 Pro, кластеризация
-v3.5	Мобильное приложение (Flutter)
-v4.0	Локальный LLM-агент (Ollama)
-🤝 Вклад и лицензия
-CyberNexus — open-source проект под лицензией MIT.
-Создан для собственных нужд и сообщества Orange Pi.
 
-Это полный концепт проекта. Сохраняй и используй! 🚀
+Проверить статус:
 
-я щас содаю страничку проека на гихаб какую лицензию мне выбрать
-Read 10 web pages
-Для твоего проекта на Orange Pi я бы посоветовал выбрать MIT License. Это одна из самых популярных и простых лицензий для открытого кода.
+sudo systemctl status cybernexus
 
-Она очень короткая и понятная: ты разрешаешь другим людям делать с твоим кодом что угодно (использовать, копировать, изменять, публиковать, продавать копии) при условии, что они сохранят оригинальное уведомление о твоих авторских правах и отказ от ответственности . Это то, что нужно для программного обеспечения с открытым исходным кодом.
+Структура проекта
+/opt/cybernexus/
+├── app.py # Основной код
+├── cybernexus.db # База данных SQLite
+├── requirements.txt # Python-зависимости
+├── venv/ # Виртуальное окружение
+└── templates/ # HTML шаблоны
+├── login.html
+├── register.html
+├── dashboard.html
+├── files.html
+├── common.html
+├── chat.html
+├── projects.html
+├── admin.html
+├── admin-wifi.html
+├── terminal.html
+└── installer.html
 
-Почему именно MIT?
+/srv/cybernexus/
+├── users/ # Личные файлы пользователей
+├── common/ # Общие файлы
+└── projects/ # Установленные проекты
 
-Максимальная свобода: В отличие от GPL, MIT не налагает ограничений на коммерческое использование или сублицензирование.
+Telegram бот
+Бот интегрирован с CyberNexus и позволяет:
 
-Совместимость: MIT отлично сочетается с лицензиями Apache 2.0 и BSD, что делает его универсальным для проектов с открытым исходным кодом.
+Привязать Telegram аккаунт к аккаунту CyberNexus
 
-Простота: Очень легко соблюдать требования, просто добавив файл LICENSE в корень проекта.
+Просматривать общие файлы
 
-Для твоего проекта CyberNexus на Orange Pi я рекомендую использовать лицензию MIT. Она разрешает свободное использование, модификацию, распространение, сублицензирование и продажу копий. Также важно отметить, что MIT не требует указания авторства и отказа от ответственности. Это идеальный выбор для открытого исходного кода.
+Загружать файлы в общее хранилище
 
-Если хочешь, чтобы твой проект был действительно открытым, я предлагаю выбрать лицензию MIT. Она проста, понятна и удобна для сообщества. Да, продолжай в том же духе! 🚀
+Получать уведомления о статусе системы
 
+Команды бота:
+
+/start — Главное меню
+/help — Список команд
+/link ЛОГИН ПАРОЛЬ — Привязать аккаунт
+/unlink — Отвязать аккаунт
+/files — Общие файлы
+/stats — Статистика системы
+
+Для работы бота нужен токен от BotFather. Создай файл .env в папке с ботом:
+
+BOT_TOKEN=ваш_токен_бота
+ADMIN_ID=ваш_telegram_id
+CYBERNEXUS_URL=http://127.0.0.1:5000
+
+Установщик проектов
+Позволяет загружать и запускать проекты через веб-интерфейс.
+
+Поддерживаемые форматы:
+
+.py — Python-файл
+
+.zip — Архив с проектом
+
+.txt — Конспект проекта
+
+Формат TXT-конспекта:
+
+ФАЙЛЫ
+main.py:
+print("Hello World!")
+
+ЗАВИСИМОСТИ
+pip: flask requests
+
+МЕТАДАННЫЕ
+type: web
+port: 8080
+start_command: cd ~ && python3 main.py
+
+После установки проект появляется в разделе «Мои проекты», где можно:
+
+Запустить / Остановить / Перезапустить
+
+Смотреть логи
+
+Обновить
+
+Открыть веб-интерфейс (если указан порт)
+
+Wi-Fi менеджер
+Позволяет управлять Wi-Fi подключениями:
+
+Сканировать доступные сети с уровнем сигнала
+
+Подключаться к сети с паролем
+
+Сохранять известные сети
+
+Видеть текущее подключение
+
+Если Orange Pi не находит знакомых сетей, он создаёт свою точку доступа:
+
+SSID: CyberNexus_AP
+Пароль: cybernexus123
+IP: 192.168.4.1
+
+Подключись к ней и открой http://192.168.4.1:5000
+
+Системные требования
+Orange Pi Zero 2W (или любой Orange Pi с Armbian)
+USB Wi-Fi адаптер (рекомендуются на чипах Mediatek MT7612U или Ralink RT5572)
+SD-карта от 8 ГБ
+Питание 5V/2A через Micro-USB
+
+Устранение проблем
+Не работает Wi-Fi сканирование:
+
+sudo apt install -y wireless-tools wpasupplicant
+sudo systemctl restart wpa_supplicant
+
+Не создаётся точка доступа:
+
+sudo apt install -y hostapd dnsmasq
+sudo systemctl unmask hostapd
+sudo systemctl start hostapd
+
+Не работает mDNS (orangepizero2w.local):
+
+sudo apt install -y avahi-daemon
+sudo systemctl enable avahi-daemon
+sudo systemctl start avahi-daemon
+
+На Windows может потребоваться установка Bonjour или включение mDNS в реестре.
+
+Лицензия
+MIT License — делай что хочешь, сохраняй копирайт.
+
+Автор
+Создано для собственных нужд и сообщества Orange Pi.
+
+Вопросы и предложения — в Issues на GitHub.
+
+проект временно преостановлен(ищю замену orange pi очень устал от возни с драйверами)
